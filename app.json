@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "realworld-mobile",
-    "slug": "realworld-mobile",
+    "name": "conduit",
+    "slug": "conduit",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
