@@ -8,26 +8,8 @@ import Home from './Screens/Home';
 import CreateArticle from './Screens/CreateArticle';
 import Profile from "./Screens/Profile";
 import Login from './Screens/Login';
+import Register from './Screens/Register';
 
-/*
-const HistoryStack = createStackNavigator({
-    History: {
-        screen: History,
-        navigationOptions: {
-          title: 'History'
-        }
-    },
-   EntryDetail: {
-       screen: EntryDetail,
-       navigationOptions: {
-           headerTintColor: purple,
-          headerStyle: {
-              backgroundColor: pink
-          }
-        }
-   }
-});
-*/
 const HomeStack = createStackNavigator({
     Home: {
         screen: Home,
@@ -111,6 +93,7 @@ const SwitchNavigator = createSwitchNavigator(
     {
       Main: TabNavigator,
       Login,
+      Register
     },
     {
       initialRouteName: 'Login',
