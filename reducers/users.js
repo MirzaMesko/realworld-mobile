@@ -1,10 +1,12 @@
 import {
-    LOGIN_SUCCESS
+    LOGIN_SUCCESS,
+    REGISTER_NEW_USER,
+    LOG_OUT
   } from '../actions/users';
   
   const initialState = {
     token: '',
-    user: ''
+    username: ''
   };
   
   const users = (state = initialState, action) => {
@@ -15,6 +17,20 @@ import {
         user: action.user,
       }
     }
+    if (action.type === REGISTER_NEW_USER) {
+        return {
+          ...state,
+          token: action.token,
+          user: action.user,
+        };
+      }
+      if (action.type === LOG_OUT) {
+        return {
+          ...state,
+          user: {},
+          token: "",
+        };
+      }
     return state;
   };
   
