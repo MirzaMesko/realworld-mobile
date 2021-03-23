@@ -4,7 +4,7 @@ import { View } from "react-native";
 import { createStore, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 import { Provider } from "react-redux";
-import reducer from "./reducers/articles";
+import reducer from "./reducers/index";
 import AppContainer from "./AppContainer";
 
 export default function App() {
