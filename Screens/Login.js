@@ -8,6 +8,7 @@ import {
   Text,
   StyleSheet,
   Button,
+  TouchableOpacity
 } from "react-native";
 
 const Login = (props, {navigation}) => {
@@ -45,7 +46,10 @@ const Login = (props, {navigation}) => {
     <View style={styles.container}>
         <Text style={{ marginBottom: '20%', fontSize: 30, color: '#5cb85c', fontWeight: 'bold'}}>conduit</Text>
         <Text style={{ marginBottom: '5%', fontSize: 30}}>Sign in</Text>
+        <TouchableOpacity onPress={() => props.navigation.navigate('Register')}>
         <Text style={{ marginBottom: '10%', color: '#5cb85c'}}>Need an account?</Text>
+        </TouchableOpacity>
+        
         {errors && errors.map(error => {
             return <Text key={error}>{error}</Text>
         })}
