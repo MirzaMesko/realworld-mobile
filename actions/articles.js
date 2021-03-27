@@ -26,15 +26,10 @@ function getCommentsSuccess(comments) {
   }
 }
 
-function setLoading() {
-  return {
-    type: SHOW_LOADING
-  }
-}
 
 
 export function getArticles(param, offset) {
-  setLoading();
+  
   if(!offset) {
     offset = 0
   }
@@ -50,6 +45,7 @@ export function getArticles(param, offset) {
             dispatch(getArticlesSuccess([response.data.article]));
           } else {
             dispatch(getArticlesSuccess(response.data.articles, response.data.articlesCount));
+            return response.data.articles
           }
           
         })
@@ -72,7 +68,6 @@ export function getTags() {
 }
 
 export function getFeed(token) {
-  setLoading();
   let url = `https://conduit.productionready.io/api/articles/feed`;
   const headers = { 'Content-Type': 'application/json', 'Authorization' : `Token ${token}` };
     return (dispatch) =>
@@ -80,6 +75,7 @@ export function getFeed(token) {
         .get(url, { headers })
         .then((response) => {
           dispatch(getArticlesSuccess(response.data.articles, response.data.articlesCount));
+          return response.data.articles
         })
         .catch((error) => {
           console.log(error);
