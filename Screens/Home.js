@@ -1,35 +1,27 @@
 import React from 'react';
 import { connect } from "react-redux";
-import { View, TouchableOpacity, Text, Switch, StyleSheet, Platform } from 'react-native';
-import { getArticles } from '../actions/articles';
-import Article from '../components/Article';
+import AsyncStorage from '@react-native-community/async-storage';
+import { View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { getCurrentUser } from '../actions/users';
+import ArticlesList from '../components/ArticlesList';
 
 function Home(props) {
   React.useEffect(() => {
-    props.onGetArticles();
-  })
+    AsyncStorage.getItem('token').then(value => {
+      props.onGetCurrentUser(value);
+    });
+  }, [])
+
     return (
-        <View style={styles.container}>
-            <Article articles={props.articles} />
+        <View style={{flex: 1}}>
+            <ArticlesList />
         </View>
     )
 }
 
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-    },
-  });
-
-  const mapStateToProps = (state) => ({
-    articles: state.articles.articles
-  });
-
   const mapDispatchToProps = dispatch => ({
-    onGetArticles: (param) => dispatch(getArticles(param))
+    onGetCurrentUser: (token) => dispatch(getCurrentUser(token)),
   })
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default connect(null, mapDispatchToProps)(Home);
