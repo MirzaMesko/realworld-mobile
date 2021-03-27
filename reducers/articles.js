@@ -4,18 +4,12 @@ import {
   GET_TAGS,
 } from "../actions/articles";
 
-import {
-  LOGIN_SUCCESS
-} from '../actions/users';
-
 const initialState = {
   articles: [{title: 'test'}],
   articlesCount: 0,
   tags: [],
   comments: [],
   loading: false,
-  token: '',
-  user: ''
 };
 
 const articles = (state = initialState, action) => {
@@ -38,20 +32,6 @@ const articles = (state = initialState, action) => {
       ...state,
       comments: action.comments,
     };
-  }
-  if(action.type === 'SHOW_LOADING') {
-    return {
-      ...state,
-      loading: true,
-      articles: [],
-    }
-  }
-  if(action.type === LOGIN_SUCCESS) {
-    return {
-      ...state,
-      token: action.token,
-      user: action.user,
-    }
   }
   return state;
 };
