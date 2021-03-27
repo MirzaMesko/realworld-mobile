@@ -5,22 +5,37 @@ import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import Home from './Screens/Home';
+import YourFeed from './Screens/YourFeed';
 import CreateArticle from './Screens/CreateArticle';
 import Profile from "./Screens/Profile";
 import Login from './Screens/Login';
 import Register from './Screens/Register';
+import ArticlesList from './components/ArticlesList';
 
 const HomeStack = createStackNavigator({
     Home: {
         screen: Home,
         navigationOptions: {
-          title: 'Conduit',
+          title: 'Global feed',
           headerTintColor: 'white',
           headerStyle: {
               backgroundColor: '#5cb85c'
           }
         }  
       }
+})
+
+const YourFeedStack = createStackNavigator({
+  YourFeed: {
+      screen: YourFeed,
+      navigationOptions: {
+        title: 'Your feed',
+        headerTintColor: 'white',
+        headerStyle: {
+            backgroundColor: '#5cb85c'
+        }
+      }  
+    }
 })
 
 const ArticleStack = createStackNavigator({
@@ -45,13 +60,23 @@ const ProfileStack = createStackNavigator({
           headerStyle: {
               backgroundColor: '#5cb85c'
           }
-        }
+        },
+    },
+    Articles: {
+        screen: ArticlesList,
+        navigationOptions: {
+            headerTintColor: 'white',
+          headerStyle: {
+              backgroundColor: '#5cb85c'
+          }
+        },
     }
 })
 
 
 const TabNavigator = createBottomTabNavigator({
   Home: HomeStack,
+  YourFeed: YourFeedStack,
   Article: ArticleStack,
   Profile: ProfileStack,
   }, { 
@@ -67,7 +92,9 @@ const TabNavigator = createBottomTabNavigator({
              iconName = `${Platform.OS === 'ios' ? 'add-circle' : 'md-add-circle'}`;
            } else if (routeName === 'Profile') {
              iconName = `${Platform.OS === 'ios' ? 'ios' : 'md'}-person`;
-           }
+           } else if (routeName === 'YourFeed') {
+            iconName = `${Platform.OS === 'ios' ? 'ios-bookmark' : 'md-bookmark'}`;
+          }
      
            
             return <Ionicons name={iconName} size={30} color={tintColor} />;
