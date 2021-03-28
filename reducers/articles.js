@@ -2,10 +2,12 @@ import {
   GET_ARTICLES,
   GET_COMMENTS,
   GET_TAGS,
+  ADD_COMMENT,
+  DELETE_COMMENT_SUCCESS
 } from "../actions/articles";
 
 const initialState = {
-  articles: [{title: 'test'}],
+  articles: [],
   articlesCount: 0,
   tags: [],
   comments: [],
@@ -31,6 +33,18 @@ const articles = (state = initialState, action) => {
     return {
       ...state,
       comments: action.comments,
+    };
+  }
+  if (action.type === ADD_COMMENT) {
+    return {
+      ...state,
+      comments: state.comments.concat(action.comment),
+    };
+  }
+  if (action.type === DELETE_COMMENT_SUCCESS) {
+    return {
+      ...state,
+      comments: state.comments.filter((comment) => comment.id !== action.id),
     };
   }
   return state;
