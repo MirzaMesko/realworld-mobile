@@ -1,5 +1,5 @@
 import React from "react";
-import { withNavigation } from 'react-navigation';
+import { withNavigation } from "react-navigation";
 import {
   View,
   TouchableOpacity,
@@ -10,13 +10,22 @@ import {
 } from "react-native";
 
 class Article extends React.Component {
-  render() { 
+  render() {
+    if (!this.props.articles.length) {
+      return <Text>Loading...</Text>;
+    }
     return (
       <ScrollView style={styles.container}>
         {this.props.articles.map((article) => {
           let date = new Date(article.createdAt);
           return (
-            <TouchableOpacity onPress={() => {this.props.navigation.navigate('Profile')}} style={styles.articleBox} key={article.slug}>
+            <TouchableOpacity
+              onPress={() => {
+                this.props.navigation.navigate("SingleArticle", {article: article, title: `${article.title}`});
+              }}
+              style={styles.articleBox}
+              key={article.slug}
+            >
               <View>
                 <Text>
                   {article.title} - {article.description}
@@ -24,11 +33,16 @@ class Article extends React.Component {
               </View>
               <View
                 style={{
-                  flexDirection: "row"
+                  flexDirection: "row",
                 }}
               >
                 <Image
-                  source={{ uri: (article.author ? article.author.image : 'https://reactnative.dev/img/tiny_logo.png' )}}
+                  source={{
+                    uri:
+                      article.author && article.author.image !== ""
+                        ? article.author.image
+                        : "https://reactnative.dev/img/tiny_logo.png",
+                  }}
                   style={{ width: 25, height: 25, resizeMode: "stretch" }}
                 />
                 <Text style={{ color: "#aaa" }}>
