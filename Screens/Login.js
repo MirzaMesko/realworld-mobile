@@ -15,6 +15,7 @@ const Login = (props, {navigation}) => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [errors, setErrors] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
 
   const login = () => {
     setErrors([]);
@@ -40,8 +41,15 @@ const Login = (props, {navigation}) => {
   React.useEffect(() => {
     AsyncStorage.getItem('token').then(value => {
       props.navigation.navigate(value ? 'Main' : 'Login');
+      if(!value) {
+        setLoading(false)
+      } 
     });
   }, [navigation]);
+
+  if(loading) {
+    return <Text>Loading...</Text>
+  }
   return (
     <View style={styles.container}>
         <Text style={{ marginBottom: '20%', fontSize: 30, color: '#5cb85c', fontWeight: 'bold'}}>conduit</Text>
