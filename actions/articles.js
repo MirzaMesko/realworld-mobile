@@ -3,6 +3,8 @@ export const GET_ARTICLES = 'GET_ARTICLES';
 export const GET_TAGS = 'GET_TAGS';
 export const GET_COMMENTS = 'GET_COMMENTS';
 export const SHOW_LOADING = 'SHOW_LOADING';
+export const ADD_COMMENT = 'ADD_COMMENT';
+export const DELETE_COMMENT_SUCCESS = 'DELETE_COMMENT_SUCCESS';
 
 function getArticlesSuccess(articles, articlesCount) {
     return {
@@ -26,7 +28,19 @@ function getCommentsSuccess(comments) {
   }
 }
 
+function addCommentSuccess(comment) {
+  return {
+    type: ADD_COMMENT,
+    comment
+  }
+}
 
+function deleteCommentSuccess(id) {
+  return { 
+    type: DELETE_COMMENT_SUCCESS,
+    id
+  }
+}
 
 export function getArticles(param, offset) {
   
@@ -82,7 +96,7 @@ export function getFeed(token) {
         });
 }
 
-export function getComments(token, slug) {
+export function getComments(slug) {
   let url = 'https://conduit.productionready.io/api/articles/' + slug + '/comments';
     return (dispatch) =>
       axios
@@ -90,6 +104,36 @@ export function getComments(token, slug) {
         .then((response) => {
           dispatch(getCommentsSuccess(response.data.comments));
           return response
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+}
+
+export function addComment(token, slug, body) {
+  let url = 'https://conduit.productionready.io/api/articles/' + slug + '/comments';
+  const headers = { 'Content-Type': 'application/json', 'Authorization' : `Token ${token}` };
+  const comment = { body }
+    return (dispatch) =>
+      axios
+        .post(url, comment, { headers})
+        .then((response) => {
+          dispatch(addCommentSuccess(response.data.comment));
+          return response
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+}
+
+export function deleteComment(token, slug, id) {
+  let url = `https://conduit.productionready.io/api/articles/${slug}/comments/${id}`;
+  const headers = { 'Content-Type': 'application/json', 'Authorization' : `Token ${token}` };
+    return (dispatch) =>
+      axios
+        .delete(url, {headers}, {params: {} } )
+        .then((response) => {
+          dispatch(deleteCommentSuccess(id))
         })
         .catch((error) => {
           console.log(error);
