@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import AsyncStorage from '@react-native-community/async-storage';
+import { useFonts } from 'expo-font';
 import { login } from '../actions/users';
 import {
   View,
@@ -16,6 +17,12 @@ const Login = (props, {navigation}) => {
   const [password, setPassword] = React.useState("");
   const [errors, setErrors] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
+  const [loaded] = useFonts({
+    TitilliumWeb: require('../assets/fonts/TitilliumWeb-Bold.ttf'),
+  });
+
+  
+  
 
   const login = () => {
     setErrors([]);
@@ -40,15 +47,27 @@ const Login = (props, {navigation}) => {
 
   React.useEffect(() => {
     AsyncStorage.getItem('token').then(value => {
-      props.navigation.navigate(value ? 'Main' : 'Login');
+      setTimeout(() => {
+        props.navigation.navigate(value ? 'Main' : 'Login');
       if(!value) {
         setLoading(false)
       } 
+      }, 2000)
+      
     });
   }, [navigation]);
 
+  if (!loaded) {
+    return null;
+  }
+
   if(loading) {
-    return <Text>Loading...</Text>
+    return (
+      <View style={styles.container}>
+          <Text>Welcome to</Text>
+          <Text style={{color: '#5cb85c', fontSize: 50, fontFamily: 'TitilliumWeb'}}>Conduit</Text>
+      </View>
+    )
   }
   return (
     <View style={styles.container}>
@@ -89,7 +108,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "flex-start",
+    justifyContent: "center",
     marginTop: '10%'
   },
   input: {
