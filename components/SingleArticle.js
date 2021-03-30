@@ -12,24 +12,43 @@ import {
   Button,
   TouchableOpacity,
 } from "react-native";
-import { getArticles, getComments, addComment, deleteComment } from "../actions/articles";
+import { getArticles, getComments, addComment, deleteComment, favoriteArticle, unfavoriteArticle } from "../actions/articles";
 
 const SingleArticle = (props) => {
   const [article, setArticle] = React.useState({});
   const [commentBody, setCommentBody] = React.useState("");
+  const [comments, setComments] = React.useState([]);
 
   const addComment = () => {
-    props.onAddComment(props.token, article.slug, commentBody);
-    setCommentBody("");
+    props.onAddComment(props.token, article.slug, commentBody).then((response) => {
+        comments.unshift(response.data.comment);
+        setCommentBody('')
+    });
+    
   };
 
   const deleteComment = (id) => {
-    props.onDeleteComment(props.token, article.slug, id)
+    props.onDeleteComment(props.token, article.slug, id).then(() => {
+        let afterDelete = comments.filter(comment => comment.id !== id);
+        setComments(afterDelete);
+    })
   }
+
+  const favoriteArticle = (slug) => {
+    props.onFavoriteArticle(props.token, slug).then((response) => {
+              setArticle(response.data.article);           
+  })}
+
+  const unfavoriteArticle = (slug) => {
+      props.onUnfavoriteArticle(props.token, slug).then((response) => {
+          setArticle(response.data.article);
+      }) 
+  } 
 
   React.useEffect(() => {
     if (props.navigation.state.params !== undefined) {
         props.onGetComments(props.navigation.state.params.article.slug).then((response) => {
+            setComments(response.data.comments);
             setArticle(props.navigation.state.params.article);
         });
       
@@ -46,7 +65,19 @@ const SingleArticle = (props) => {
   }
   return (
     <ScrollView style={styles.container}>
-      <Text style={{ fontSize: 40, margin: 10 }}>{article.title}</Text>
+        <View style={{ flexDirection: "row"}}>
+        <Text style={{ fontSize: 40, margin: 10, flex: 5 }}>{article.title}</Text>
+        <TouchableOpacity style={{ margin: 10, flex: 1, justifyContent: "center", alignItems: "center" }}
+        onPress={() => (article.favorited !== true ? favoriteArticle(article.slug) : unfavoriteArticle(article.slug))}>
+        <View style={{ flexDirection: "row"}}>
+            <Ionicons name="heart-outline" size={30} color={article.favorited ? "#5cb85c" : "#aaa"}/>
+            <Text style={{
+            color: "#aaa",
+            fontSize: 20,
+          }}>{article.favoritesCount}</Text>
+            </View>
+            </TouchableOpacity>
+        </View>
       {article.tagList ? (
         <View
           style={{
@@ -106,8 +137,8 @@ const SingleArticle = (props) => {
       </View>
       <Text style={{ fontSize: 30, margin: 20 }}>{article.body}</Text>
       <Text style={{ fontSize: 15, marginLeft: 30 }}>Comments</Text>
-      {props.comments
-        ? props.comments.map((comment) => {
+      {comments
+        ? comments.map((comment) => {
             return (
               <View
                 style={{ margin: 30, borderWidth: 1, borderColor: "#aaa" }}
@@ -206,6 +237,8 @@ const mapDispatchToProps = (dispatch) => ({
   onGetComments: (slug) => dispatch(getComments(slug)),
   onAddComment: (token, slug, body) => dispatch(addComment(token, slug, body)),
   onDeleteComment: (token, slug, id) => dispatch(deleteComment(token, slug, id)),
+  onFavoriteArticle: (token, slug) => dispatch(favoriteArticle(token, slug)),
+  onUnfavoriteArticle: (token, slug) => dispatch(unfavoriteArticle(token, slug)),
 });
 
 export default withNavigation(
