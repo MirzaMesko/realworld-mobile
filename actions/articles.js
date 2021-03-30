@@ -139,3 +139,33 @@ export function deleteComment(token, slug, id) {
           console.log(error);
         });
 }
+
+export function favoriteArticle(token, slug) {
+  let url = 'https://conduit.productionready.io/api/articles/' + slug + '/favorite';
+  const headers = { 'Content-Type': 'application/json', 'Authorization' : `Token ${token}` };
+    return (dispatch) =>
+      axios
+        .post(url, {}, {headers} )
+        .then((response) => {
+          //dispatch(articleFavorited([response.data.article]))
+          return response
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+}
+
+export function unfavoriteArticle(token, slug) {
+  let url = 'https://conduit.productionready.io/api/articles/' + slug + '/favorite';
+  const headers = { 'Content-Type': 'application/json', 'Authorization' : `Token ${token}` };
+    return (dispatch) =>
+      axios
+        .delete(url, {headers}, {params: {} } )
+        .then((response) => {
+          //dispatch(articleUnfavorited([response.data.article]))
+          return response
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+}
