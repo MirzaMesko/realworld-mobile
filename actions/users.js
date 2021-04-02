@@ -79,3 +79,46 @@ export function login(user) {
       });
     }
   }
+
+  export function getProfile(token, username) {
+    const url = 'https://conduit.productionready.io/api/profiles/' + username;
+    const headers = { 'Content-Type': 'application/json', 'Authorization' : `Token ${token}` };
+    return (dispatch) => 
+      axios
+      .get(url, {headers})
+      .then((response) => {
+        return response
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    }
+  
+
+  export function followUser(token, username) {
+    const headers = { 'Content-Type': 'application/json', 'Authorization' : `Token ${token}` };
+    const url = 'https://conduit.productionready.io/api/profiles/' + username + '/follow';
+    return (dispatch) => 
+      axios
+      .post(url, {}, {headers})
+      .then((response) => {
+        return response
+      })
+      .catch((error) => {
+        console.log(error.errors);
+      });
+  }
+
+  export function unfollowUser(token, username) {
+    const headers = { 'Content-Type': 'application/json', 'Authorization' : `Token ${token}` };
+    const url = 'https://conduit.productionready.io/api/profiles/' + username + '/follow';
+    return (dispatch) => 
+      axios
+      .delete(url, {headers}, {params: {} })
+      .then((response) => {
+        return response
+      })
+      .catch((error) => {
+        console.log(error.errors);
+      });
+    }
