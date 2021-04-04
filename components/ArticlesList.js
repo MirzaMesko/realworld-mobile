@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from 'react-redux';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   ActivityIndicator,
   View,
@@ -7,26 +8,32 @@ import {
   Text
 } from "react-native";
 import Article from './Article';
-import { getArticles } from '../actions/articles';
+import { getArticles, getFeed } from '../actions/articles';
 
 const ArticlesList = (props) => {
   const [listOfArticles, setListOfArticles] = React.useState(0);
 
-    React.useEffect(() => {
-        if(props.route) {
-          setListOfArticles(props.route.params.articles)
-          props.navigation.setOptions({
-            title: `${props.route.params.title}`
+  useFocusEffect(
+    React.useCallback(() => {
+      if(props.route) {
+        setListOfArticles(props.route.params.articles)
+        props.navigation.setOptions({
+          title: `${props.route.params.title}`
+        })
+        
+      } else if (props.feed) {
+        props.onGetFeed(props.token).then((response) => {
+          setListOfArticles(response)
+        })
+        
+      } else {
+          props.onGetArticles().then((response) => {
+            setListOfArticles(response)
           })
-          
-        } else if (props.articles) {
-          setListOfArticles(props.articles)
-        } else {
-            props.onGetArticles().then((response) => {
-              setListOfArticles(response)
-            })
-        }
-    }, [props])
+      }
+  }, [props])
+  )
+    
 
     if (!listOfArticles) {
         return (
@@ -59,11 +66,13 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
-    articlesCount: state.articles.articlesCount
+    articlesCount: state.articles.articlesCount, 
+    token: state.users.token
   });
 
   const mapDispatchToProps = dispatch => ({
     onGetArticles: (param, offset) => dispatch(getArticles(param, offset)),
+    onGetFeed: (token) => dispatch(getFeed(token)),
   })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ArticlesList);
