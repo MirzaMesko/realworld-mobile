@@ -2,17 +2,18 @@ import React from "react";
 import { connect } from "react-redux";
 import AsyncStorage from '@react-native-community/async-storage';
 import { useFonts } from 'expo-font';
-import { login } from '../actions/users';
+import { login, loginSuccess } from '../actions/users';
 import {
   View,
   TextInput,
   Text,
   StyleSheet,
   Button,
-  TouchableOpacity
+  TouchableOpacity,
+  ActivityIndicator
 } from "react-native";
 
-const Login = (props, {navigation}) => {
+const Login = (props) => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [errors, setErrors] = React.useState([]);
@@ -31,9 +32,6 @@ const Login = (props, {navigation}) => {
       password: password
     }
     props.onLogin(user).then((response) => {
-      if(response.status === 200) {
-        props.navigation.navigate('Main');
-      }
       if(response.status !== 200) {
         let keys = Object.keys(response);
         let error = [];
@@ -48,17 +46,23 @@ const Login = (props, {navigation}) => {
   React.useEffect(() => {
     AsyncStorage.getItem('token').then(value => {
       setTimeout(() => {
-        props.navigation.navigate(value ? 'Main' : 'Login');
+        if(value) {
+          props.onLoginSuccess(value);
+        }
       if(!value) {
         setLoading(false)
       } 
       }, 2000)
       
     });
-  }, [navigation]);
+  }, []);
 
   if (!loaded) {
-    return null;
+    return (
+    <View style={styles.container}>
+        <ActivityIndicator size={40} color="#5cb85c"/>
+      </View>
+    )
   }
 
   if(loading) {
@@ -72,13 +76,13 @@ const Login = (props, {navigation}) => {
   return (
     <View style={styles.container}>
         <Text style={{ marginBottom: '20%', fontSize: 30, color: '#5cb85c', fontWeight: 'bold'}}>conduit</Text>
-        <Text style={{ marginBottom: '5%', fontSize: 30}}>Sign in</Text>
+        <Text style={{ marginBottom: '5%', fontSize: 30, color: 'black'}}>Sign in</Text>
         <TouchableOpacity onPress={() => props.navigation.navigate('Register')}>
         <Text style={{ marginBottom: '10%', color: '#5cb85c'}}>Need an account?</Text>
         </TouchableOpacity>
         
         {errors && errors.map(error => {
-            return <Text key={error}>{error}</Text>
+            return <Text key={error} style={{ color: 'red', width: '80%'}}>- {error}</Text>
         })}
       <TextInput
         style={styles.input}
@@ -109,7 +113,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: '10%'
   },
   input: {
     width: "90%",
@@ -126,6 +129,7 @@ const styles = StyleSheet.create({
 const mapDispatchToProps = (dispatch) => {
     return {
         onLogin: (user) => dispatch(login(user)),
+        onLoginSuccess: (token) => dispatch(loginSuccess(token)),
     }
 }
 
