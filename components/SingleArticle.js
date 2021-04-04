@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 import { withNavigation } from "react-navigation";
 import {
+  ActivityIndicator,
   Text,
   TextInput,
   View,
@@ -64,30 +65,29 @@ const SingleArticle = (props) => {
 
   const unfollowUser = (username) => {
     props.onUnfollowUser(props.token, username).then((response) => {
-      console.log(response.data.profile);
       setArticleAuthor(response.data.profile);
     });
   };
 
   React.useEffect(() => {
-    if (props.navigation.state.params !== undefined) {
-      const { username } = props.navigation.state.params.article.author;
+    if (props.route) {
+      const { username } = props.route.params.article.author;
       props
-        .onGetComments(props.navigation.state.params.article.slug)
+        .onGetComments(props.route.params.article.slug)
         .then((response) => {
           setComments(response.data.comments);
-          setArticle(props.navigation.state.params.article);
+          setArticle(props.route.params.article);
         });
       props.onGetProfile(props.token, username).then((response) => {
         setArticleAuthor(response.data.profile);
       });
     }
-  }, [props.navigation.state.params]);
+  }, [props.route.params]);
 
   if (!article.title) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Text>Loading...</Text>
+        <ActivityIndicator size={40} color="#5cb85c"/>
       </View>
     );
   }
@@ -168,6 +168,7 @@ const SingleArticle = (props) => {
           }}
           style={{ width: 25, height: 25, resizeMode: "stretch" }}
         />
+        <TouchableOpacity onPress={() => props.navigation.navigate('Profile', {user: `${article.author.username}`})}>
         <Text
           style={{
             color: "#aaa",
@@ -176,6 +177,8 @@ const SingleArticle = (props) => {
         >
           {article.author ? article.author.username : null} -{" "}
         </Text>
+        </TouchableOpacity>
+        
         <Text
           style={{
             color: "#aaa",
@@ -283,10 +286,6 @@ const SingleArticle = (props) => {
     </ScrollView>
   );
 };
-
-SingleArticle["navigationOptions"] = (screenProps) => ({
-  title: `${screenProps.navigation.state.params.title}`,
-});
 
 const styles = StyleSheet.create({
   container: {
