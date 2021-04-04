@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from "react-redux";
-import { View, TouchableOpacity, StyleSheet, Text, ScrollView, } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Text, ScrollView, ActivityIndicator } from 'react-native';
 import { getTags, getArticles } from '../actions/articles';
 
 function TagsList(props) {
@@ -10,14 +10,14 @@ function TagsList(props) {
 
   const articlesByTag = (tag) => {
     props.onGetArticles(`tag=${tag}`).then((response) => {
-      props.navigation.navigate("Articles", {articles: response, title: `#${tag}`});
+      props.navigation.navigate("Articles", { articles: response, title: `#${tag}`, });
     });
   }
 
   if (!props.tags.length) {
     return (
       <View style={styles.container}>
-          <Text >Loading...</Text>
+          <ActivityIndicator size={40} color="#5cb85c"/>
       </View>
     ) 
     
