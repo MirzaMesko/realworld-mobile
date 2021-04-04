@@ -1,6 +1,5 @@
 import React from "react";
 import { connect } from "react-redux";
-import AsyncStorage from "@react-native-community/async-storage";
 import { registerUser } from "../actions/users";
 import { View, TextInput, Text, StyleSheet, Button, TouchableOpacity, KeyboardAvoidingView, Platform } from "react-native";
 
@@ -18,9 +17,6 @@ const Register = (props, { navigation }) => {
       password: password,
     };
     props.onRegister(user).then((response) => {
-      if (response.status === 200) {
-        props.navigation.navigate("Main");
-      }
       if (response.status !== 200) {
         let keys = Object.keys(response);
         let error = [];
@@ -32,11 +28,6 @@ const Register = (props, { navigation }) => {
     });
   };
 
-  React.useEffect(() => {
-    AsyncStorage.getItem("token").then((value) => {
-      props.navigation.navigate(value ? "Main" : "Register");
-    });
-  }, [navigation]);
   return (
     <KeyboardAvoidingView  behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1}}
     keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}>
@@ -99,7 +90,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "flex-start",
-    marginTop: "10%",
   },
   input: {
     width: "90%",
