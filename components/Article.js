@@ -1,5 +1,4 @@
 import React from "react";
-import { withNavigation } from "react-navigation";
 import {
   View,
   TouchableOpacity,
@@ -7,21 +6,24 @@ import {
   StyleSheet,
   ScrollView,
   Image,
+  ActivityIndicator
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
-class Article extends React.Component {
-  render() {
-    if (!this.props.articles.length) {
-      return <Text>Loading...</Text>;
+const Article = (props) => {
+  const navigation = useNavigation();
+
+    if (!props.articles.length) {
+      return <ActivityIndicator size={40} color="#5cb85c"/>;
     }
     return (
       <ScrollView style={styles.container}>
-        {this.props.articles.map((article) => {
+        {props.articles.map((article) => {
           let date = new Date(article.createdAt);
           return (
             <TouchableOpacity
               onPress={() => {
-                this.props.navigation.navigate("SingleArticle", {article: article, title: `${article.title}`});
+                navigation.navigate("SingleArticle", {article: article});
               }}
               style={styles.articleBox}
               key={article.slug}
@@ -57,7 +59,7 @@ class Article extends React.Component {
       </ScrollView>
     );
   }
-}
+
 
 const styles = StyleSheet.create({
   container: {
@@ -75,4 +77,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withNavigation(Article);
+export default Article;
