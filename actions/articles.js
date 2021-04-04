@@ -5,6 +5,7 @@ export const GET_COMMENTS = 'GET_COMMENTS';
 export const SHOW_LOADING = 'SHOW_LOADING';
 export const ADD_COMMENT = 'ADD_COMMENT';
 export const DELETE_COMMENT_SUCCESS = 'DELETE_COMMENT_SUCCESS';
+export const GET_USER_FEED = 'GET_USER_FEED';
 
 function getArticlesSuccess(articles, articlesCount) {
     return {
@@ -12,6 +13,14 @@ function getArticlesSuccess(articles, articlesCount) {
         articles,
         articlesCount
     }
+};
+
+function getFeedSuccess(articles, articlesCount) {
+  return {
+      type: GET_USER_FEED,
+      articles,
+      articlesCount
+  }
 };
 
 function getTagsSuccess(tags) {
@@ -88,7 +97,7 @@ export function getFeed(token) {
       axios
         .get(url, { headers })
         .then((response) => {
-          dispatch(getArticlesSuccess(response.data.articles, response.data.articlesCount));
+          dispatch(getFeedSuccess(response.data.articles, response.data.articlesCount));
           return response.data.articles
         })
         .catch((error) => {
