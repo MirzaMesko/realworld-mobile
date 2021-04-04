@@ -1,20 +1,24 @@
 import React from "react";
 import { connect } from 'react-redux';
-import { withNavigation } from 'react-navigation';
 import {
-  Text,
+  ActivityIndicator,
   View,
   StyleSheet,
+  Text
 } from "react-native";
 import Article from './Article';
 import { getArticles } from '../actions/articles';
 
 const ArticlesList = (props) => {
-  const [listOfArticles, setListOfArticles] = React.useState([]);
-    
+  const [listOfArticles, setListOfArticles] = React.useState(0);
+
     React.useEffect(() => {
-        if(props.navigation.state.params !== undefined) {
-          setListOfArticles(props.navigation.state.params.articles)
+        if(props.route) {
+          setListOfArticles(props.route.params.articles)
+          props.navigation.setOptions({
+            title: `${props.route.params.title}`
+          })
+          
         } else if (props.articles) {
           setListOfArticles(props.articles)
         } else {
@@ -22,24 +26,28 @@ const ArticlesList = (props) => {
               setListOfArticles(response)
             })
         }
-    }, [props.articles])
+    }, [props])
 
-    if (!listOfArticles.length) {
+    if (!listOfArticles) {
         return (
           <View style={styles.container}>
-              <Text >Loading...</Text>
+              <ActivityIndicator size={40} color="#5cb85c"/>
           </View>
         ) 
-        
+    }
+    if(!listOfArticles.length) {
+      return (
+        <View style={styles.container}>
+              <Text>There are no articles here ... Yet.</Text>
+          </View>
+      )
     }
     return (
         <Article articles={listOfArticles} />
       );
 }
 
-ArticlesList['navigationOptions'] = screenProps => ({
-  title: `${screenProps.navigation.state.params.title}`
-})
+
 
 const styles = StyleSheet.create({
   container: {
@@ -58,4 +66,4 @@ const mapStateToProps = (state) => ({
     onGetArticles: (param, offset) => dispatch(getArticles(param, offset)),
   })
 
-export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(ArticlesList));
+export default connect(mapStateToProps, mapDispatchToProps)(ArticlesList);
