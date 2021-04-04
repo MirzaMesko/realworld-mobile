@@ -20,6 +20,7 @@ import {
   deleteComment,
   favoriteArticle,
   unfavoriteArticle,
+  deleteArticle
 } from "../actions/articles";
 import { followUser, unfollowUser, getProfile } from "../actions/users";
 
@@ -69,6 +70,14 @@ const SingleArticle = (props) => {
     });
   };
 
+  const deleteArticle = () => {
+    props.onDeleteArticle(props.token, article.slug).then(() => {
+      props.onGetArticles(`author=${articleAuthor.username}`).then((response) => {
+        props.navigation.navigate("Articles", {articles: response, title: `${articleAuthor.username}'s Articles`});
+      });
+    })
+  }
+
   React.useEffect(() => {
     if (props.route) {
       const { username } = props.route.params.article.author;
@@ -91,41 +100,86 @@ const SingleArticle = (props) => {
       </View>
     );
   }
+
+  let icons = (
+    <TouchableOpacity
+    style={{
+      margin: 10,
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    }}
+    onPress={() =>
+      article.favorited !== true
+        ? favoriteArticle(article.slug)
+        : unfavoriteArticle(article.slug)
+    }
+  >
+    <View style={{ flexDirection: "row" }}>
+      <Ionicons
+        name="heart-outline"
+        size={30}
+        color={article.favorited ? "#5cb85c" : "#aaa"}
+      />
+      <Text
+        style={{
+          color: "#aaa",
+          fontSize: 20,
+        }}
+      >
+        {article.favoritesCount}
+      </Text>
+    </View>
+  </TouchableOpacity>
+  )
+
+  if (article.author.username === props.user) {
+    icons = (
+      <View style={{ flex: 1}}>
+          <TouchableOpacity
+    style={{
+      margin: 10,
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    }}
+    onPress={() => deleteArticle()}
+  >
+      <Ionicons
+        name="md-trash"
+        size={30}
+        color={article.favorited ? "#5cb85c" : "#aaa"}
+      />
+  </TouchableOpacity>
+  <TouchableOpacity
+    style={{
+      margin: 10,
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    }}
+    onPress={() =>
+      article.favorited !== true
+        ? favoriteArticle(article.slug)
+        : unfavoriteArticle(article.slug)
+    }
+  >
+      <Ionicons
+        name="create-outline"
+        size={30}
+        color={article.favorited ? "#5cb85c" : "#aaa"}
+      />
+  </TouchableOpacity>
+      </View>
+    )
+  }
   return (
     <ScrollView style={styles.container}>
       <View style={{ flexDirection: "row" }}>
         <Text style={{ fontSize: 40, margin: 10, flex: 5 }}>
           {article.title}
         </Text>
-        <TouchableOpacity
-          style={{
-            margin: 10,
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          onPress={() =>
-            article.favorited !== true
-              ? favoriteArticle(article.slug)
-              : unfavoriteArticle(article.slug)
-          }
-        >
-          <View style={{ flexDirection: "row" }}>
-            <Ionicons
-              name="heart-outline"
-              size={30}
-              color={article.favorited ? "#5cb85c" : "#aaa"}
-            />
-            <Text
-              style={{
-                color: "#aaa",
-                fontSize: 20,
-              }}
-            >
-              {article.favoritesCount}
-            </Text>
-          </View>
-        </TouchableOpacity>
+        {icons}
       </View>
       {article.tagList ? (
         <View
@@ -187,28 +241,32 @@ const SingleArticle = (props) => {
           {new Date(article.createdAt).toDateString()}
         </Text>
       </View>
+      {article.author.username !== props.user ? 
       <TouchableOpacity
-        onPress={() =>
-          articleAuthor.following
-            ? unfollowUser(article.author.username)
-            : followUser(article.author.username)
-        }
+      onPress={() =>
+        articleAuthor.following
+          ? unfollowUser(article.author.username)
+          : followUser(article.author.username)
+      }
+    >
+      <Text
+        style={{
+          borderWidth: 1,
+          padding: 5,
+          color: "#aaa",
+          margin: 10,
+          maxWidth: "50%",
+          borderColor: "#aaa",
+          borderRadius: 5,
+        }}
       >
-        <Text
-          style={{
-            borderWidth: 1,
-            padding: 5,
-            color: "#aaa",
-            margin: 10,
-            maxWidth: "50%",
-            borderColor: "#aaa",
-            borderRadius: 5,
-          }}
-        >
-          {articleAuthor.following ? "- unfollow" : "+ follow"}{" "}
-          {article.author.username}
-        </Text>
-      </TouchableOpacity>
+        {articleAuthor.following ? "- unfollow" : "+ follow"}{" "}
+        {article.author.username}
+      </Text>
+    </TouchableOpacity>
+    : null
+    }
+      
       <Text style={{ fontSize: 30, margin: 20 }}>{article.body}</Text>
       <Text style={{ fontSize: 15, marginLeft: 30 }}>Comments</Text>
       {comments
@@ -322,6 +380,7 @@ const mapDispatchToProps = (dispatch) => ({
   onFollowUser: (token, username) => dispatch(followUser(token, username)),
   onUnfollowUser: (token, username) => dispatch(unfollowUser(token, username)),
   onGetProfile: (token, username) => dispatch(getProfile(token, username)),
+  onDeleteArticle: (token, slug) => dispatch(deleteArticle(token, slug)),
 });
 
 export default withNavigation(
