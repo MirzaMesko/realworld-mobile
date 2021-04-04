@@ -1,5 +1,6 @@
 import {
   GET_ARTICLES,
+  GET_USER_FEED,
   GET_COMMENTS,
   GET_TAGS,
   ADD_COMMENT,
@@ -9,6 +10,8 @@ import {
 const initialState = {
   articles: [],
   articlesCount: 0,
+  userFeed: [],
+  feedArticlesCount: 0,
   tags: [],
   comments: [],
   loading: false,
@@ -20,6 +23,14 @@ const articles = (state = initialState, action) => {
       ...state,
       articles: action.articles,
       articlesCount: action.articlesCount,
+      loading: false
+    };
+  }
+  if (action.type === GET_USER_FEED) {
+    return {
+      ...state,
+      userFeed: action.articles,
+      feedArticlesCount: action.articlesCount,
       loading: false
     };
   }
