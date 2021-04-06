@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-community/async-storage';
+import { getArticles } from './articles';
 const axios = require('axios');
 
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
@@ -6,24 +7,14 @@ export const REGISTER_NEW_USER = 'REGISTER_NEW_USER';
 export const LOG_OUT = 'LOG_OUT';
 export const GET_CURRENT_USER_SUCCESS = 'GET_CURRENT_USER_SUCCESS';
 
-export function loginSuccess(token, user) {
+export function loginSuccess(token) {
     return {
       type: LOGIN_SUCCESS,
       token,
-      user,
-    };
-  }
-
-  export function registrationSuccess(token, user) {
-    return {
-      type: REGISTER_NEW_USER,
-      token,
-      user,
     };
   }
 
   export function logout() {
-    AsyncStorage.removeItem('token');
     return {
       type: LOG_OUT,
     };
@@ -43,7 +34,7 @@ export function login(user) {
         .post('https://conduit.productionready.io/api/users/login', { user })
         .then((response) => {
           AsyncStorage.setItem('token', response.data.user.token);
-          dispatch(loginSuccess(response.data.user.token, response.data.user.username));
+          dispatch(loginSuccess(response.data.user.token));
           return response
         })
         .catch((error) => {
@@ -57,7 +48,7 @@ export function login(user) {
         .post('https://conduit.productionready.io/api/users', { user })
         .then((response) => {
           AsyncStorage.setItem('token', response.data.user.token);
-          dispatch(registrationSuccess(response.data.user.token, response.data.user));
+          dispatch(loginSuccess(response.data.user.token));
           return response
         })
         .catch((error) => {
@@ -122,3 +113,21 @@ export function login(user) {
         console.log(error.errors);
       });
     }
+
+    export function editUser(token, email, username, password, image, bio) {
+      console.log('params: ', token, email, username, password, image, bio)
+    const headers = { 'Content-Type': 'application/json', 'Authorization' : `Token ${token}` };
+    const user = { email: email, username: username, password: password, image: image, bio: bio }
+    return (dispatch) =>  
+      axios
+      .put('https://conduit.productionready.io/api/user', {user}, {headers})
+      .then((response) => {
+        console.log('tokens: ',token, response.data.user.token)
+        dispatch(getCurrentUserSuccess(response.data.user, token))
+        dispatch(getArticles(`author=${response.data.user.username}`))
+        return response
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
