@@ -225,7 +225,7 @@ const SingleArticle = (props) => {
         <TouchableOpacity onPress={() => props.navigation.navigate('Profile', {user: `${article.author.username}`})}>
         <Text
           style={{
-            color: "#aaa",
+            color: "#5cb85c",
             marginLeft: 10,
           }}
         >
