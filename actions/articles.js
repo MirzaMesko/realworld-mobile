@@ -6,6 +6,7 @@ export const SHOW_LOADING = 'SHOW_LOADING';
 export const ADD_COMMENT = 'ADD_COMMENT';
 export const DELETE_COMMENT_SUCCESS = 'DELETE_COMMENT_SUCCESS';
 export const GET_USER_FEED = 'GET_USER_FEED';
+export const DELETE_ARTICLE_SUCCESS = 'DELETE_ARTICLE_SUCCESS';
 
 function getArticlesSuccess(articles, articlesCount) {
     return {
@@ -48,6 +49,13 @@ function deleteCommentSuccess(id) {
   return { 
     type: DELETE_COMMENT_SUCCESS,
     id
+  }
+}
+
+function deleteArticleSuccess(slug) {
+  return {
+    type: DELETE_ARTICLE_SUCCESS,
+    slug
   }
 }
 
@@ -173,6 +181,20 @@ export function unfavoriteArticle(token, slug) {
         .then((response) => {
           //dispatch(articleUnfavorited([response.data.article]))
           return response
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+}
+
+export function deleteArticle(token, slug) {
+  let url = 'https://conduit.productionready.io/api/articles/' + slug;
+  const headers = { 'Content-Type': 'application/json', 'Authorization' : `Token ${token}` };
+    return (dispatch) =>
+      axios
+        .delete(url, {headers}, {params: {} } )
+        .then((response) => {
+          dispatch(deleteArticleSuccess(slug))
         })
         .catch((error) => {
           console.log(error);
