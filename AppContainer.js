@@ -14,6 +14,7 @@ import Register from "./Screens/Register";
 import ArticlesList from "./components/ArticlesList";
 import TagsList from "./components/TagsList";
 import SingleArticle from './components/SingleArticle';
+import Settings from './Screens/Settings';
 
 
 const Stack = createStackNavigator();
@@ -112,6 +113,7 @@ function AppContainer(props) {
            <Stack.Screen name='Tags' component={TagsList} />
            <Stack.Screen name="Articles" component={ArticlesList} />
            <Stack.Screen name="Profile" component={Profile} />
+           <Stack.Screen name='Settings' component={Settings} />
            </>
       : 
       <>
