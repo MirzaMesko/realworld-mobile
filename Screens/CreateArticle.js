@@ -1,12 +1,14 @@
 import React, {useState} from 'react';
 import { connect } from "react-redux";
-import { createArticle } from '../actions/articles';
+import { useFocusEffect } from '@react-navigation/native';
+import { createArticle, editArticle } from '../actions/articles';
 import {
   View,
   TextInput,
   Text,
   StyleSheet,
-  Button
+  Button,
+  KeyboardAvoidingView
 } from "react-native";
 
 function CreateArticle(props) {
@@ -26,8 +28,31 @@ function CreateArticle(props) {
        props.navigation.navigate('SingleArticle', {article: response.data.article});
        reset();
      });
+};
+
+const edit = () => {
+  props.onEditArticle(props.token, title, description, body, props.route.params.article.slug).then((response) => {
+    props.navigation.navigate('SingleArticle', {article: response.data.article});
+       reset();
+  }) 
 }
+
+useFocusEffect(
+  React.useCallback(() => {
+    reset();
+    if(props.route.params) {
+      const { article } = props.route.params;
+      setTitle(article.title);
+      setDescription(article.description);
+      setBody(article.body);
+      //setTags(article.tagList);
+    } 
+  }, [props])
+)
+
 return (
+  <KeyboardAvoidingView  behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1}}
+    keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 10}>
   <View style={styles.container}>
       <Text style={{ marginBottom: '5%', fontSize: 30, color: 'black'}}>{props.route.params ? 'Edit article' : 'Create article'}</Text>
       <TextInput
@@ -63,9 +88,10 @@ return (
     <Button
     color="#5cb85c"
       title={props.route.params ? ' Edit ' : ' Create '}
-      onPress={() => create()}
+      onPress={() => props.route.params ? edit() : create()}
     ></Button>
   </View>
+  </KeyboardAvoidingView>
 );
 }
 
@@ -104,6 +130,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = dispatch => ({
     onCreateArticle: (token, title, description, body, tags) => dispatch(createArticle(token, title, description, body, tags)),
+    onEditArticle: (token, title, description, body, slug) => dispatch(editArticle(token, title, description, body, slug)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateArticle);
