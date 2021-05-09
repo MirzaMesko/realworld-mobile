@@ -114,6 +114,7 @@ function AppContainer(props) {
            <Stack.Screen name="Articles" component={ArticlesList} />
            <Stack.Screen name="Profile" component={Profile} />
            <Stack.Screen name='Settings' component={Settings} />
+           <Stack.Screen name='Edit Article' component={CreateArticle} />
            </>
       : 
       <>
