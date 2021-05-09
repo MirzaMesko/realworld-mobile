@@ -64,9 +64,9 @@ export function getArticles(param, offset) {
   if(!offset) {
     offset = 0
   }
-  let url = `https://conduit.productionready.io/api/articles?limit=10&offset=${offset}&${param}`;
+  let url = `https://conduit.productionready.io/api/articles?limit=20&offset=${offset}&${param}`;
   if (!param) {
-    url = `https://conduit.productionready.io/api/articles?limit=10&offset=${offset}`
+    url = `https://conduit.productionready.io/api/articles?limit=20&offset=${offset}`
   }
     return (dispatch) =>
       axios
@@ -195,6 +195,39 @@ export function deleteArticle(token, slug) {
         .delete(url, {headers}, {params: {} } )
         .then((response) => {
           dispatch(deleteArticleSuccess(slug))
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+}
+
+export function createArticle(token, title, description, body, tags) {
+  let url = `https://conduit.productionready.io/api/articles`;
+  const headers = { 'Content-Type': 'application/json', 'Authorization' : `Token ${token}` };
+  const article = {title, description, body, tagList: [tags]}
+    return (dispatch) =>
+      axios
+        .post(url,  article, { headers } )
+        .then((response) => {
+          dispatch(getArticlesSuccess([response.data.article]));
+          getComments(token, response.data.article.slug)
+          return response
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+}
+
+export function editArticle(token, title, description, body, slug) {
+  let url = 'https://conduit.productionready.io/api/articles/' + slug;
+  const headers = { 'Content-Type': 'application/json', 'Authorization' : `Token ${token}` };
+    return (dispatch) =>
+      axios
+        .put(url, {title, description, body}, {headers} )
+        .then((response) => {
+          dispatch(getArticlesSuccess([response.data.article]));
+          getComments(token, response.data.article.slug)
+          return response
         })
         .catch((error) => {
           console.log(error);
