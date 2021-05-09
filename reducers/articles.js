@@ -4,7 +4,8 @@ import {
   GET_COMMENTS,
   GET_TAGS,
   ADD_COMMENT,
-  DELETE_COMMENT_SUCCESS
+  DELETE_COMMENT_SUCCESS,
+  DELETE_ARTICLE_SUCCESS
 } from "../actions/articles";
 
 const initialState = {
@@ -56,6 +57,14 @@ const articles = (state = initialState, action) => {
     return {
       ...state,
       comments: state.comments.filter((comment) => comment.id !== action.id),
+    };
+  }
+  if (action.type === DELETE_ARTICLE_SUCCESS) {
+    return {
+      ...state,
+      articles: state.articles.filter(
+        (article) => article.slug !== action.slug
+      ),
     };
   }
   return state;
