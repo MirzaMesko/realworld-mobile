@@ -1,16 +1,15 @@
 import {
     LOGIN_SUCCESS,
-    REGISTER_NEW_USER,
     LOG_OUT,
     GET_CURRENT_USER_SUCCESS
   } from '../actions/users';
+
   
   const initialState = {
-    token: '',
     username: '',
     currentUser: {},
     token: '',
-    user: ''
+    isLoggedIn: false,
   };
   
   const users = (state = initialState, action) => {
@@ -18,21 +17,14 @@ import {
       return {
         ...state,
         token: action.token,
-        user: action.user,
+        isLoggedIn: true,
       }
     }
-    if (action.type === REGISTER_NEW_USER) {
-        return {
-          ...state,
-          token: action.token,
-          user: action.user,
-        };
-      }
       if (action.type === LOG_OUT) {
         return {
           ...state,
-          user: {},
-          token: "",
+          isLoggedIn: false,
+          token: '',
         };
       }
       if (action.type === GET_CURRENT_USER_SUCCESS) {
