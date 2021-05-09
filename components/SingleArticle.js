@@ -148,7 +148,7 @@ const SingleArticle = (props) => {
       <Ionicons
         name="md-trash"
         size={30}
-        color={article.favorited ? "#5cb85c" : "#aaa"}
+        color="#aaa"
       />
   </TouchableOpacity>
   <TouchableOpacity
@@ -158,16 +158,12 @@ const SingleArticle = (props) => {
       justifyContent: "center",
       alignItems: "center",
     }}
-    onPress={() =>
-      article.favorited !== true
-        ? favoriteArticle(article.slug)
-        : unfavoriteArticle(article.slug)
-    }
+    onPress={() => props.navigation.navigate('Edit Article', {article: article})}
   >
       <Ionicons
         name="create-outline"
         size={30}
-        color={article.favorited ? "#5cb85c" : "#aaa"}
+        color="#aaa"
       />
   </TouchableOpacity>
       </View>
